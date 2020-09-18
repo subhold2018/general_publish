@@ -1,0 +1,38 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.8.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'java'
+}
+
+repositories {
+    //mavenLocal() {}
+    maven { url "https://repo.maven.apache.org/maven2" }
+    maven { url "http://repo.maven.apache.org/maven2" }
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.kafka:spring-kafka'
+    implementation 'io.springfox:springfox-swagger2:3.0.0'
+    implementation 'io.springfox:springfox-swagger-ui:2.9.2'
+    implementation 'org.apache.logging.log4j:log4j-core'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    compile 'javax.xml.bind:jaxb-api:2.3.0'
+    compile 'com.sun.xml.bind:jaxb-core:2.3.0.1'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+}
+
+group = 'com.lumendata'
+version = '0.0.1-SNAPSHOT'
+description = 'customer survivorship service'
+sourceCompatibility = '1.8'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+configurations {
+    compile
+}

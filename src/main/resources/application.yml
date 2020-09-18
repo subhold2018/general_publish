@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: general-publish
+  data:
+    neo4j:
+      password: neo4j
+      uri: bolt+routing://127.0.0.1:7687
+      username: neo4j
+  kafka:
+    consumer:
+      group-id: general-publish-group
+
+customer:
+  destination:
+    general-publish:
+      topic: general-publish
