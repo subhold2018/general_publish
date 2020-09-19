@@ -8,7 +8,6 @@ public class Affiliation {
     private String id;
     private String updated;
     private String updatedBy;
-    private String modId;
     private String affiliationCode;
     private String effectiveEndDate;
     private String institutionId;
