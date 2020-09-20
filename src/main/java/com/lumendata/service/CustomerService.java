@@ -1,6 +1,7 @@
 package com.lumendata.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.lumendata.model.*;
 import com.lumendata.model.publish.ListOfSwiPersonPublishIO;
 import com.lumendata.model.publish.ListOfSwiPersonPublishIOTopElmt;
@@ -9,6 +10,7 @@ import com.lumendata.repository.CustomerRepository;
 import com.lumendata.transformation.CustomerTransformation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -20,14 +22,17 @@ import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKN
 @Slf4j
 public class CustomerService {
 
-    @Autowired
-    CustomerProvider customerProvider;
+    @Value("${customer.destination.merge-mv-publish.topic}")
+    private String mvTopic;
 
     @Autowired
     CustomerTransformation customerTransformation;
 
     @Autowired
     CustomerRepository customerRepository;
+
+    @Autowired
+    ProducerService producerService;
 
     public void processMessage(String guid) {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -101,6 +106,11 @@ public class CustomerService {
                 customer.setIdentifications(identifications);
             }
             ListOfSwiPersonPublishIO listOfSwiPersonPublishIO= customerTransformation.transform(customer);
+            XmlMapper xmlMapper=new XmlMapper();
+            PayloadMapper payloadMapper=new PayloadMapper();
+            payloadMapper.setPayload(xmlMapper.writeValueAsString(listOfSwiPersonPublishIO));
+            payloadMapper.setTopicName(mvTopic);
+            //  producerService.sendMessage(payloadMapper);
 
         }catch (Exception exception){
             log.error("Error while searching customer-data with guid={}",guid);
