@@ -8,4 +8,6 @@ public class Email {
     private String logicalDeleteFlg;
     private String useType;
     private String isPrimary;
+    private String source;
+    private String sourceId;
 }

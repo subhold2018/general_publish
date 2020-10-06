@@ -184,14 +184,14 @@
   "identifications":[
 
   ],
-  "source":{
+  "source":[{
     "source":"CS",
     "sourceId":"101881930",
     "createdDate":null,
     "updatedDate":null,
     "operation":"Upsert",
     "guid":"50B7FCC7-723E-11e2-A23E-00505691002B"
-  },
+  }],
   "realTimePubSub":"true",
   "guid":"guid-1234"
 }

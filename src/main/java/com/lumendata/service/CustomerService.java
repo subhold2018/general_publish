@@ -1,6 +1,7 @@
 package com.lumendata.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.lumendata.model.*;
 import com.lumendata.model.publish.ListOfSwiPersonPublishIO;
@@ -22,7 +23,7 @@ import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKN
 @Slf4j
 public class CustomerService {
 
-    @Value("${customer.destination.merge-mv-publish.topic}")
+    @Value("${customer.destination.general-publish.topic}")
     private String mvTopic;
 
     @Autowired
@@ -45,6 +46,7 @@ public class CustomerService {
             CustomerSearchResponse customerSearchResponse = objectMapper.convertValue(
                     hashMap, CustomerSearchResponse.class);
             Customer customer=new Customer();
+            customer.setGuid(guid);
             if(null!=customerSearchResponse.getSearchData().get("primaryData")){
                 customerSearchResponse.getSearchData().get("primaryData").forEach(mapData->{
                     PrimaryData primaryData=objectMapper.convertValue(mapData,PrimaryData.class);
@@ -52,9 +54,11 @@ public class CustomerService {
                 });
             }
             if(null!=customerSearchResponse.getSearchData().get("sourceData")){
+                List<Source> sources=new ArrayList<>();
                 customerSearchResponse.getSearchData().get("sourceData").forEach(mapData->{
                     Source source=objectMapper.convertValue(mapData, Source.class);
-                    customer.setSource(source);
+                    sources.add(source);
+                    customer.setSource(sources);
                 });
             }
             if(null!=customerSearchResponse.getSearchData().get("emailData")){
@@ -106,11 +110,10 @@ public class CustomerService {
                 customer.setIdentifications(identifications);
             }
             ListOfSwiPersonPublishIO listOfSwiPersonPublishIO= customerTransformation.transform(customer);
-            XmlMapper xmlMapper=new XmlMapper();
             PayloadMapper payloadMapper=new PayloadMapper();
-            payloadMapper.setPayload(xmlMapper.writeValueAsString(listOfSwiPersonPublishIO));
             payloadMapper.setTopicName(mvTopic);
-            //  producerService.sendMessage(payloadMapper);
+            payloadMapper.setPayload(objectMapper.writeValueAsString(customer));
+            producerService.sendMessage(payloadMapper);
 
         }catch (Exception exception){
             log.error("Error while searching customer-data with guid={}",guid);

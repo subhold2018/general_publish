@@ -1,3 +1,6 @@
+server:
+  port: 8091
+
 spring:
   application:
     name: general-publish
@@ -9,8 +12,10 @@ spring:
   kafka:
     consumer:
       group-id: general-publish-group
+    producer:
+      bootstrap-servers: 127.0.0.1:9092
 
 customer:
   destination:
     general-publish:
-      topic: general-publish
+      topic: mv1-lookup

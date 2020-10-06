@@ -26,10 +26,11 @@ public class CustomerTransformation {
         contact.setMaritalStatusDate(customer.getPrimaryData().getMaritalStatusDate());
         contact.setHomePhone(customer.getPrimaryData().getHomePhone());
         contact.setVABenefits(customer.getPrimaryData().getVaBenefits());
-        contact.setPartyUId(customer.getSource().getGuid());
+        contact.setPartyUId(customer.getSource().get(0).getGuid());
         contact.setListOfContactAlternatePhone(getPhoneData(customer.getPhones()));
         contact.setListOfCuUcmHeConstituentAddress(getAddressData(customer.getAddresses()));
         contact.setListOfCuUcmHeConstituentName(getNames(customer.getNames()));
+        contact.setListOfCIFContactReference(getSourceData(customer.getSource()));
         if(!CollectionUtils.isEmpty(customer.getIdentifications())) {
             contact.setListOfCuUcmHeConstituentIdentification(getIdentification(customer.getIdentifications()));
         }
@@ -38,6 +39,18 @@ public class CustomerTransformation {
             contact.setListOfCuUcmHeConstituentAffiliation(getAffliationData(customer.getAffiliations()));
         }
         return contact;
+    }
+
+    private ListOfCIFContactReference getSourceData(List<Source> source) {
+        ListOfCIFContactReference listOfCIFContactReference=new ListOfCIFContactReference();
+        List<CIFContactReference> cifContactReferences=listOfCIFContactReference.getCIFContactReference();
+        source.forEach(source1 -> {
+            CIFContactReference cifContactReference=new CIFContactReference();
+            cifContactReference.setSystemName(source1.getSource());
+            cifContactReference.setExternalId(source1.getSourceId());
+            cifContactReferences.add(cifContactReference);
+        });
+        return listOfCIFContactReference;
     }
 
     private ListOfCuUcmHeConstituentAffiliation getAffliationData(List<Affiliation> affiliations) {
