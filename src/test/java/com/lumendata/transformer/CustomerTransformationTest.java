@@ -37,13 +37,6 @@ public class CustomerTransformationTest {
                 .readValue(new File("src/test/resources/customer.json"), Customer.class);
         ListOfSwiPersonPublishIO listOfSwiPersonPublishIO=
                 customerTransformation.transform(customer);
-        XmlMapper xmlMapper=new XmlMapper();
-        xmlMapper.setPropertyNamingStrategy(PropertyNamingStrategy.UPPER_CAMEL_CASE);
-      //  PersonPublishOperationInput personPublishOperationInput=new PersonPublishOperationInput();
-      //  personPublishOperationInput.setListOfSwiPersonPublishIO(listOfSwiPersonPublishIO);
-        String xml=xmlMapper.writeValueAsString(listOfSwiPersonPublishIO);
-
-        System.out.println("xml->"+xml);
         Assert.assertNotNull(listOfSwiPersonPublishIO.getContact().get(0).getPartyUId());
         Assert.assertNotNull(listOfSwiPersonPublishIO.getContact()
                 .get(0).getListOfCIFContactReference().getCIFContactReference().get(0).getSystemName());

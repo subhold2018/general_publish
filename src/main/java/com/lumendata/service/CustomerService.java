@@ -14,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import java.io.StringWriter;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -114,10 +117,30 @@ public class CustomerService {
             payloadMapper.setTopicName(mvTopic);
             payloadMapper.setPayload(objectMapper.writeValueAsString(customer));
             producerService.sendMessage(payloadMapper);
+            //TODO call middle ware to publish
+            String request=generatePublishXml(listOfSwiPersonPublishIO);
+            if(null!=request){
+                //send to OSB
+            }
 
         }catch (Exception exception){
             log.error("Error while searching customer-data with guid={}",guid);
         }
+    }
+
+    private String generatePublishXml(ListOfSwiPersonPublishIO listOfSwiPersonPublishIO) {
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(ListOfSwiPersonPublishIO.class);
+            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            StringWriter sw = new StringWriter();
+            jaxbMarshaller.marshal(listOfSwiPersonPublishIO, sw);
+            String xmlString = sw.toString();
+            return xmlString;
+        }catch (Exception ex){
+            log.error("Error while generateGeneralPublishXml:",ex);
+        }
+        return null;
     }
 
 }

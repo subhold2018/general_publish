@@ -9,7 +9,7 @@ import java.util.List;
 
 @Component
 public class CustomerTransformation {
-
+    public static final String UPSERT="Upsert";
     public ListOfSwiPersonPublishIO transform(Customer customer) {
         ListOfSwiPersonPublishIO listOfSwiPersonPublishIO = new ListOfSwiPersonPublishIO();
         listOfSwiPersonPublishIO.getContact().add(getCustomerData(customer));
@@ -18,6 +18,7 @@ public class CustomerTransformation {
 
     private Contact getCustomerData(Customer customer) {
         Contact contact = new Contact();
+        contact.setOperation(UPSERT);
         contact.setBirthDate(customer.getPrimaryData().getDob());
         contact.setEmailAddress(customer.getPrimaryData().getEmail());
         contact.setFirstName(customer.getPrimaryData().getFirstName());
